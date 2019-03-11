@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+  <script src="word data.js"></script>
+  <meta name="author" content="Bemuse">
+  <meta name="description" content="requestAnimationFrame base: TypeWriter and Auto line-break">
+  
+  <style>
+    body{
+      background-color: white;
+      overflow-x: hidden;
+      overflow-y: scroll;
+    }
+    p{
+      color: black;
+    }
+  </style>
+
+  <script type="text/javascript" language="javascript">
+  $(document).ready(function(){
+    var arry = [], arryLength = 10, sentence = '', text = '', i = 0, j = 0, k = 0;
+
+    animate();
+
+    function render(){
+      var randomNounOne = Math.floor(Math.random()*ArryNoun.length),
+          randomNounTwo = Math.floor(Math.random()*ArryNoun.length),
+          randomVerb = Math.floor(Math.random()*ArryVerb.length),
+          randomAdj = Math.floor(Math.random()*ArryAdj.length),
+          randomAdv = Math.floor(Math.random()*ArryAdv.length);
+          //toggle = false;
+
+      sentence = ArryNoun[randomNounOne]+' '+ArryVerb[randomVerb]+' '+ArryAdj[randomAdj]+' '+ArryNoun[randomNounTwo]+' '+ArryAdv[randomAdv]+'. <br>';
+
+      if(arry.length < arryLength){
+        arry.push(sentence);
+      }
+
+      if(i < arry[j].length){
+        $('#text').html(function(){
+          text += arry[j].charAt(i);
+          return text;
+        });
+        i++;
+      }
+      else{
+        j++;
+        i = 0;
+        if(j > arryLength-1){
+          arry.splice(0, arry.length);
+          j = 0;
+        }
+        if(k < 9){
+          k += 1;
+        }
+        else{
+          text = text.substring(text.indexOf('<br>')+'<br>'.length, text.length);
+        }
+        /*if(k > 1){
+          if(toggle){
+            text = text.substring(text.indexOf('<br>')+'<br>'.length, text.length);
+          }
+        }*/
+      }
+      //console.log(arry.length, k);
+    }
+
+    function animate(){
+      requestAnimationFrame(animate);
+
+      render();
+    }
+  });
+  </script>
+</head>
+<body>
+  <p id="text"></p>
+</body>
+</html>
