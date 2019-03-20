@@ -2,79 +2,94 @@
 <html>
 <head>
   <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-  <script src="word data.js"></script>
-  <meta name="author" content="Bemuse">
-  <meta name="description" content="requestAnimationFrame base: TypeWriter and Auto line-break">
-  
   <style>
     body{
-      background-color: white;
-      overflow-x: hidden;
-      overflow-y: scroll;
+      overflow: hidden;
     }
-    p{
-      color: black;
+    div#container{
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: url('72055179_p0.jpg') no-repeat center center;
+      background-size: cover;
     }
   </style>
 
   <script type="text/javascript" language="javascript">
   $(document).ready(function(){
-    var arry = [], arryLength = 10, sentence = '', text = '', i = 0, j = 0, k = 0;
+    var width, height, extraSize, i = 0, currentTime = 0, startTime = window.performance.now();
+    var positionArray = [], timeArray = [], transitionArray = [];
+    width = $(window).width();
+    height = $(window).height();
+    extraSize = width / 40;
 
+    render();
     animate();
+    noneInit();
 
-    function render(){
-      var randomNounOne = Math.floor(Math.random()*ArryNoun.length),
-          randomNounTwo = Math.floor(Math.random()*ArryNoun.length),
-          randomVerb = Math.floor(Math.random()*ArryVerb.length),
-          randomAdj = Math.floor(Math.random()*ArryAdj.length),
-          randomAdv = Math.floor(Math.random()*ArryAdv.length);
-          //toggle = false;
+    function init(){
+      $('#container').css({
+        'width' : width + extraSize,
+        'height' : height + extraSize,
+        'top' : -(extraSize / 2),
+        'left' : -(extraSize / 2)
+      });
 
-      sentence = ArryNoun[randomNounOne]+' '+ArryVerb[randomVerb]+' '+ArryAdj[randomAdj]+' '+ArryNoun[randomNounTwo]+' '+ArryAdv[randomAdv]+'. <br>';
+      window.addEventListener('resize', onWindowResize, false);
+    }
 
-      if(arry.length < arryLength){
-        arry.push(sentence);
-      }
-
-      if(i < arry[j].length){
-        $('#text').html(function(){
-          text += arry[j].charAt(i);
-          return text;
-        });
-        i++;
-      }
-      else{
-        j++;
-        i = 0;
-        if(j > arryLength-1){
-          arry.splice(0, arry.length);
-          j = 0;
-        }
-        if(k < 9){
-          k += 1;
-        }
-        else{
-          text = text.substring(text.indexOf('<br>')+'<br>'.length, text.length);
-        }
-        /*if(k > 1){
-          if(toggle){
-            text = text.substring(text.indexOf('<br>')+'<br>'.length, text.length);
-          }
-        }*/
-      }
-      //console.log(arry.length, k);
+    function noneInit(){
+      $('#container').css('transition', '1.2s');
+      $('#container').css('transform', 'translate(0px, 0px)');
     }
 
     function animate(){
-      requestAnimationFrame(animate);
+      var randomPosition = {x: Math.random() * extraSize - (extraSize / 2), y: Math.random() * extraSize - (extraSize / 2)},
+          randomTime = Math.random() * 3000 + 3000;
+          currentTime += 1000 / 60;
 
-      render();
+      if(positionArray.length < 10){
+        positionArray.push(randomPosition);
+        timeArray.push(randomTime);
+        transitionArray.push((randomTime / 1600).toFixed(3)+'s');
+      }
+      if(currentTime - startTime < timeArray[i] / 5){
+        $('#container').css('transition', transitionArray[i]);
+        $('#container').css('transform', 'translate('+positionArray[i].x+'px, '+positionArray[i].y+'px)');
+      }else{
+        i++;
+        currentTime = 0;
+        if(i > positionArray.length - 1){
+          positionArray.splice(0, positionArray.length);
+          timeArray.splice(0, timeArray.length);
+          transitionArray.splice(0, transitionArray.length);
+          i = 0;
+        }
+      }
+      //console.log(positionArray, timeArray, transitionArray);
+      //console.log(currentTime, startTime);
+    }
+    console.log(positionArray, timeArray, transitionArray);
+
+    function onWindowResize(){
+      width = $(window).width();
+      height = $(window).height();
+
+      extraSize = width / 40;
+    }
+
+    function render(){
+      init();
+      animate();
+
+      requestAnimationFrame(render);
     }
   });
   </script>
 </head>
 <body>
-  <p id="text"></p>
+  <div id="container"></div>
 </body>
 </html>
